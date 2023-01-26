@@ -10,8 +10,6 @@ import { Navigation, Wrapper, Loadingindicator, Button } from 'components';
 
 
 
-
-
 function App() {
 
   const { i18n } = useTranslation();

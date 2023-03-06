@@ -2,12 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { LOADING_STATES } from "data/constants";
 
+import { fetchAllCategoriesAction } from "data/actions/common.actions";
 
 
 export const commonSlice = createSlice({
     name: "common",
     initialState: {
-        loadingState: {},
+        loadingState: null,
         allCategories: []
     },
     reducers: {
@@ -32,6 +33,36 @@ export const commonSlice = createSlice({
                 ...state,
                 loadingState: {},
                 allCategories: [],
+            }
+        },
+    },
+    extraReducers: {
+        [fetchAllCategoriesAction.pending]: (state) => {
+            return {
+                ...state,
+                loadingState: {
+                    ...state.loadingState,
+                    ALL_CATEGORIES_REQUEST: LOADING_STATES.LOADING
+                }
+            }
+        },
+        [fetchAllCategoriesAction.fulfilled]: (state, { payload }) => {
+            let newLoadingState = {
+                ...state.loadingState
+            }
+            delete newLoadingState.ALL_CATEGORIES_REQUEST
+            return {
+                ...state,
+                allCategories: payload,
+                loadingState: {
+                    ...newLoadingState
+                }
+            }
+        },
+        [fetchAllCategoriesAction.rejected]: (state) => {
+            return {
+                ...state,
+                loadingState: LOADING_STATES.FAILED
             }
         },
     }

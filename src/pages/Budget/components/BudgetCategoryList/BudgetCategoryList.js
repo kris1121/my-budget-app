@@ -4,6 +4,7 @@ import { groupBy } from 'lodash';
 
 import ToggleableList from '../ToggleableList';
 import ParentCategory from './ParentCategory';
+import CategoryItem from './CategoryItem';
 
 const BudgetCategoryList = () => {
 
@@ -12,22 +13,22 @@ const BudgetCategoryList = () => {
 
     const budgetedCategoriesByParent = groupBy(budgetedCategories, item => allCategories.find(category => category.id === item.id).parentCategory.name)
 
-    console.log(budgetedCategoriesByParent);
 
     const listItems = Object.entries(budgetedCategoriesByParent).map(([parentName, categories]) => ({
         id: parentName,
         Trigger: ({ onClick }) => (
             <ParentCategory
                 name={parentName}
-                onClick={onClick}
+                onClick={() => onClick(parentName)}
             />
         ),
-        // children: categories.map(category => (
-
-        // ))
+        children: categories.map(budgetedCategories=> {
+          const { name } = allCategories.find(category => category.id === budgetedCategories.categoryId);
+          return (
+            <CategoryItem name={name} key={budgetedCategories.id}/>
+          )}
+        )
     }));
-
-    console.log(listItems)
 
   return (
     <div>

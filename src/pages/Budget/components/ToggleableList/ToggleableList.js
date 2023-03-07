@@ -11,6 +11,7 @@ const Item = ({ item, onClickHandler, isActive }) => (
 const ToggleableList = ({ items }) => {
 
     const [selectedItem, setSelectedItem] = useState();
+
   return (
     <>
       {items.map(item => (

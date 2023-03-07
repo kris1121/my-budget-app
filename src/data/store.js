@@ -11,7 +11,7 @@ export const configureStore = preloadedState => {
     const middlewareEnhancer = applyMiddleware(...middlewares);
     const enhancers = [middlewareEnhancer];
 
-    const composedEnhancers = composedWithDevTools(...enhancers);
+    const composedEnhancers = composeWithDevTools(...enhancers);
     const store = configureStore(rootReducer, preloadedState, composedEnhancers);
 
     return store;

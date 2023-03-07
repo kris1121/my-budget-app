@@ -7,14 +7,14 @@ import GlobalStyles from './index.css'
 import theme from 'utils/theme';
 
 import { Navigation, Wrapper, Loadingindicator, Button } from 'components';
-
-
+import Budget from 'pages/Budget';
 
 
 
 function App() {
 
   const { i18n } = useTranslation();
+
 
   return (
     <Fragment>
@@ -34,7 +34,9 @@ function App() {
         <Wrapper>
           <Switch>
             <Route exact path="/">Homepage</Route>
-            <Route path="/budget">Budget page</Route>
+            <Route path="/budget">
+              <Budget />
+            </Route>
           </Switch>
         </Wrapper>
 

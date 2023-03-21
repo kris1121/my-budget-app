@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { LOADING_STATES } from "data/constants";
-import { fetchBudgetAction, fetchBudgetedCategoriesAction } from '../actions/budget.actions'
+import { fetchBudgetAction, fetchBudgetedCategoriesAction } from '../actions/budget.actions';
 
 
 export const budgetSlice = createSlice({
@@ -9,7 +9,8 @@ export const budgetSlice = createSlice({
     initialState: {
         loadingState: null,
         budget: {},
-        budgetCategories: []
+        budgetCategories: [],
+        selectedParentCategoryId: undefined
     },
     reducers: {
         BUDGET_GET_SUCCESS: (state, action) => {
@@ -36,6 +37,13 @@ export const budgetSlice = createSlice({
                 budget: {},
             }
         },
+        SET_SELECTED_PARENT_CATEGORY_ID: (state, action) => {
+            return {
+                ...state,
+                selectedParentCategoryId: action.payload
+            }
+           
+        }
     },
     extraReducers: {
         [fetchBudgetAction.pending]: (state) => {
@@ -101,6 +109,6 @@ export const budgetSlice = createSlice({
     }
 })
 
-export const { BUDGET_GET_SUCCESS, BUDGET_GET_REQUEST, BUDGET_GET_FAILURE } = budgetSlice.actions;
+export const { BUDGET_GET_SUCCESS, BUDGET_GET_REQUEST, BUDGET_GET_FAILURE, SET_SELECTED_PARENT_CATEGORY_ID } = budgetSlice.actions;
 
 export default budgetSlice.reducer

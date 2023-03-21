@@ -156,10 +156,10 @@
         {
             "description": "Default Agile Workflow",
             "amount": 123,
-            "categoryId": 2,
+            "categoryId": "7",
             "date": "2020-02-13",
             "budgetId": "1",
-            "id": "p1tYW2Q"
+            "id": "7"
         }
     ]
 }

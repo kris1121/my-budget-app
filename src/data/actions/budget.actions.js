@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 
-import { fetchBudget, fetchBudgetedCategories } from "data/fetch/budget.fetch"
+import { fetchBudget, fetchBudgetedCategories } from "data/fetch/budget.fetch";
 
 export const fetchBudgetAction = createAsyncThunk("budget/fetchBudget", (id, { dispatch, rejectWithValue}) => {
     try {

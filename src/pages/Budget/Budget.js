@@ -6,6 +6,7 @@ import { fetchAllCategoriesAction } from 'data/actions/common.actions';
 import { Grid } from './Budget.css';
 import { Loadingindicator } from 'components';
 import BudgetCategoryList from './components/BudgetCategoryList';
+import BudgetTransactionList from './components/BudgetTransactionList/BudgetTransactionList';
 
 const Budget = () => {
 
@@ -19,16 +20,16 @@ const Budget = () => {
     useEffect(() => {
         dispatch(fetchBudgetAction(1));
         dispatch(fetchBudgetedCategoriesAction(1));
-        dispatch(fetchAllCategoriesAction());
+      dispatch(fetchAllCategoriesAction());
     }, [dispatch])
 
   return (
     <Grid>
      <section>
-        {isLoaded ? (<BudgetCategoryList />) : <Loadingindicator />}
+        {isLoaded ? <BudgetCategoryList /> : <Loadingindicator />}
       </section>
      <section>
-        {isLoaded ? 'Transaction list' : <Loadingindicator />}
+        {isLoaded ? <BudgetTransactionList /> : <Loadingindicator />}
       </section>
     </Grid>
   )

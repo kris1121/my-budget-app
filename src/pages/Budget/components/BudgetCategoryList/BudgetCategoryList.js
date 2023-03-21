@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useMemo, useCallback } from 'react'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { groupBy } from 'lodash';
@@ -14,15 +14,31 @@ const BudgetCategoryList = () => {
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const handleClickParentCategoryRef = useRef(null);
 
     const budgetedCategories = useSelector(state => state.budget.budgetCategories);
     const allCategories = useSelector(state => state.common.allCategories);
     const budget = useSelector(state => state.budget.budget);
 
-    const budgetedCategoriesByParent = groupBy(budgetedCategories, item => allCategories.find(category => category.id === item.id).parentCategory.name)
+
+    const budgetedCategoriesByParent = useMemo(() => groupBy(budgetedCategories, item => allCategories
+      .find(category => category.id === item.id).parentCategory.name), [budgetedCategories, allCategories]);
+
+    const handleClearParentCategorySelect = useCallback(
+      () => {
+        dispatch(SET_SELECTED_PARENT_CATEGORY_ID());
+        handleClickParentCategoryRef.current();
+    }, [dispatch, handleClickParentCategoryRef])
+
+    const handleSelectRestParentCategories = useCallback(
+      () => {
+        dispatch(SET_SELECTED_PARENT_CATEGORY_ID(null));
+        handleClickParentCategoryRef.current();
+    }, [dispatch, handleClickParentCategoryRef])
 
 
-    const listItems = Object.entries(budgetedCategoriesByParent).map(([parentName, categories]) => ({
+    const listItems = useMemo(() => Object.entries(budgetedCategoriesByParent)
+    .map(([parentName, categories]) => ({
         id: parentName,
         Trigger: ({ onClick }) => (
             <ParentCategory
@@ -46,31 +62,33 @@ const BudgetCategoryList = () => {
               />
             )}
           )
-    }));
+    })), [budgetedCategoriesByParent, allCategories, budget.transactions, dispatch, budgetedCategories.id]);
   
-  const totalSpent = budget.transactions
-    .reduce((acc, transaction) => acc + transaction.amount, 0);
-  const restToSpent = budget.totalAmount - totalSpent;
+  const totalSpent = useMemo(() => budget.transactions
+    .reduce((acc, transaction) => acc + transaction.amount, 0), [budget.transactions]);
+  const restToSpent = useMemo(() => budget.totalAmount - totalSpent, [budget.totalAmount, totalSpent]);
 
-  const amountTaken = budgetedCategories.reduce((acc, budgetedCategory) => {
+  const amountTaken = useMemo(() => budgetedCategories.reduce((acc, budgetedCategory) => {
     const categoryTransactions = budget.transactions
       .filter(transaction => transaction.categoryId === budgetedCategory.id);
     const categoryExpenses = categoryTransactions
       .reduce((acc, transaction) => acc + transaction.amount, 0);
     
     return acc + Math.max(categoryExpenses, budgetedCategory.budget);
-  }, 0);
+  }, 0), [budgetedCategories, budget.transactions]);
 
-  const notBudgetedTransactions = budget.transactions
+  const notBudgetedTransactions = useMemo(() => budget.transactions
     .filter(transaction => {
       return !budgetedCategories
         .find(budgetedCategory => budgetedCategory.id === transaction.categoryId)
-    });
+    }), [budget.transactions, budgetedCategories]);
   
-  const notBudgetedExpenses = notBudgetedTransactions
-    .reduce((acc, transaction) => acc + transaction.amount, 0);
+  const notBudgetedExpenses = useMemo(() => notBudgetedTransactions
+    .reduce((acc, transaction) => acc + transaction.amount, 0), [notBudgetedTransactions]);
   
-  const availableForRestCategories = budget.totalAmount - amountTaken - notBudgetedExpenses;
+  const availableForRestCategories = useMemo(
+    () => budget.totalAmount - amountTaken - notBudgetedExpenses, [budget.totalAmount, amountTaken, notBudgetedExpenses]
+  );
 
   return (
     <div>
@@ -80,15 +98,20 @@ const BudgetCategoryList = () => {
         <ParentCategory
           name={budget.name}
           amount={restToSpent}
+          onClick={handleClearParentCategorySelect}
         />
       </div>
-      <ToggleableList items={listItems} />
+      <ToggleableList 
+        items={listItems} 
+        clickRef={handleClickParentCategoryRef}
+      />
       <div css={`
         border-top: 5px solid ${({theme}) => theme.colors.gray.light}
       `}>
         <ParentCategory
           name={t('Other categories')}
           amount={availableForRestCategories}
+          onClick={handleSelectRestParentCategories}
           />
       </div>
     </div>

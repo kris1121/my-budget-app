@@ -8,6 +8,7 @@ import { Grid } from './Budget.css';
 import { Loadingindicator, Modal, Button } from 'components';
 import BudgetCategoryList from './components/BudgetCategoryList';
 import BudgetTransactionList from './components/BudgetTransactionList/BudgetTransactionList';
+import AddTransactionForm from './components/AddTransactionForm';
 
 const Budget = () => {
 
@@ -41,7 +42,9 @@ const Budget = () => {
       </Grid>
       <Switch>
         <Route path="/budget/transaction/new">
-          <Modal>Modal</Modal>
+          <Modal>
+            <AddTransactionForm />
+          </Modal>
         </Route>
       </Switch>
     </>

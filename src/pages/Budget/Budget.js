@@ -16,7 +16,9 @@ const Budget = () => {
 
     const budgetIsLoaded = useSelector(state => state.budget.loadingState);
     const commonIsLoaded = useSelector(state => state.common.loadingState);
-    const isLoaded = useMemo(() => (!!budgetIsLoaded && Object.keys(budgetIsLoaded).length === 0) && (!!commonIsLoaded && Object.keys(commonIsLoaded).length === 0), [budgetIsLoaded, commonIsLoaded]);
+    const isLoaded = useMemo(() => (!!budgetIsLoaded && Object.keys(budgetIsLoaded).length === 0) && (!!commonIsLoaded && Object
+    .keys(commonIsLoaded).length === 0), [budgetIsLoaded, commonIsLoaded]);
+    const allCategories = useSelector(state => state.common.allCategories);
 
 
     useEffect(() => {
@@ -43,7 +45,7 @@ const Budget = () => {
       <Switch>
         <Route path="/budget/transaction/new">
           <Modal>
-            <AddTransactionForm />
+            <AddTransactionForm categories={allCategories} groupCategoriesBy="parentCategory.name"/>
           </Modal>
         </Route>
       </Switch>

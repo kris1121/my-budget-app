@@ -1,13 +1,29 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Form, Field } from "react-final-form";
+import { groupBy } from 'lodash';
 
 
 
 const required = (value) => (value ? undefined : "Required!");
 
-const AddTransactionForm = () => {
+const AddTransactionForm = ({ categories, groupCategoriesBy }) => {
 
-  return (
+    const groupedCategoriesByParentName = groupCategoriesBy ?
+        groupBy(categories, groupCategoriesBy) : null;
+    const categoryItems = useMemo(
+        () => groupedCategoriesByParentName ?
+            Object.entries(groupedCategoriesByParentName)
+            .map(([parentName, categories]) => (
+                <optgroup label={parentName} key={parentName}>
+                    {categories.map(category => (
+                        <option value={category.id} key={category.name}>{category.name}</option>
+                    ))}
+                </optgroup>
+            ))
+        :  categories.map(category => (
+            <option value={category.id} key={category.name}>{category.name}</option>
+        )), [groupedCategoriesByParentName])
+      return (
       <Form
           onSubmit={console.log}
           render={({ handleSubmit, form, submitting, pristine, values }) => (
@@ -21,11 +37,12 @@ const AddTransactionForm = () => {
                           </div>
                       )}
                   </Field>
-                  <Field name="amount" validate={required}>
+                  <Field name="amount" validate={required} parse={value => parseFloat(value, 10)}>
                       {({ input, meta }) => (
                           <div>
                               <label>Amount</label>
-                              <input {...input} type="text" placeholder="Amount" />
+                              <input {...input} type="number" step="0.01"
+                                  placeholder="Amount" />
                               {meta.error && meta.touched && <span>{meta.error}</span>}
                           </div>
                       )}
@@ -34,7 +51,9 @@ const AddTransactionForm = () => {
                       {({ input, meta }) => (
                           <div>
                               <label>Category</label>
-                              <input {...input} type="text" placeholder="Category" />
+                              <select {...input}>
+                                  {categoryItems}
+                              </select>
                               {meta.error && meta.touched && <span>{meta.error}</span>}
                           </div>
                       )}
@@ -43,7 +62,7 @@ const AddTransactionForm = () => {
                       {({ input, meta }) => (
                           <div>
                               <label>Date</label>
-                              <input {...input} type="text" placeholder="Date" />
+                              <input {...input} type="date" placeholder="Date" />
                               {meta.error && meta.touched && <span>{meta.error}</span>}
                           </div>
                       )}
